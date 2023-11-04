@@ -24,3 +24,15 @@ def getLogLevel(level = None):
 
 	logger.info(f"Invalid log level {level}")
 	return logging.DEBUG
+
+def createUrl(addr, port, resource_uri = None):
+	url = ""
+	if not addr.startswith("http"):
+		url = "http://"
+
+	url += addr + ":" + str(port)
+
+	if resource_uri:
+		url += "/" + resource_uri
+
+	return url
