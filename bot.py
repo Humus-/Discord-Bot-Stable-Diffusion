@@ -1,49 +1,43 @@
-# bot.py
-# import os
-
-# import discord
-# from dotenv import load_dotenv
-
-# load_dotenv()
-# TOKEN = os.getenv('DISCORD_TOKEN')
-
-# intents = discord.Intents.default()
-# print(f'default Intents: {intents}')
-# client = discord.Client(intents = intents)
-
-# @client.event
-# async def on_ready():
-#     print(f'{client.user} has connected to Discord!')
-
-# client.run(TOKEN)
-
-
-
 import discord
 import os
 # from discord.ext import commands
 from dotenv import load_dotenv
 import aiohttp
 import random
+import ai_group
+import logging
+import yaml
+from utils.utils import createUrl
 
 from discord import app_commands
 from discord.ext import commands
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+CONFIG_PATH = "utils/config.yml"
 
 intents = discord.Intents.default()
 intents.message_content = True
+config = None
 # bot = commands.Bot(command_prefix='>', intents=intents)
 
-# @bot.command()
-# async def ping(ctx):
-#     await ctx.send('pong')
 
-# bot.run(TOKEN)
-
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
+def load_config():
+    with open(CONFIG_PATH, "r") as stream:
+        try:
+            global config
+            config = yaml.safe_load(stream)
+
+            logger.info("Config Loaded")
+        except yaml.YAMLError as exc:
+            logger.error("Could not load config file")
+
+load_config()
 # async with aiohttp.ClientSession() as session:
 #     async with session.get('http://aws.random.cat/meow') as r:
 #         if r.status == 200:
@@ -97,21 +91,21 @@ watching = discord.Activity(name='you intently', type = discord.ActivityType.wat
 playing = discord.Game(name='with life')
 client = CustomClient(intents = intents, command_prefix = '!', activity = watching)  # or activity = playing
 
-# @client.event
-# async def on_error(event, *args, **kwargs):
-#     print(f'error: {event}')
-#     with open('err.log', 'a') as f:
-#         if event == 'on_message':
-#             f.write(f'Unhandled message: {args[0]}\n')
-#         else:
-#             raise
+@client.event
+async def on_error(event, *args, **kwargs):
+    print(f'error: {event}')
+    with open('err.log', 'a') as f:
+        if event == 'on_message':
+            f.write(f'Unhandled message: {args[0]}\n')
+        else:
+            raise
 
 # bot = commands.Bot(command_prefix='!', intents = intents)
 
 # tree = app_commands.CommandTree(client)
-@client.tree.command(name="test", description="Test to see if slash commands are working")
-async def test(interaction):
-    await interaction.response.send_message("Test")
+# @client.tree.command(name="test", description="Test to see if slash commands are working")
+# async def test(interaction):
+#     await interaction.response.send_message("Test")
 
 @client.command(name='99')
 async def nine_nine(ctx):
@@ -127,8 +121,18 @@ async def nine_nine(ctx):
     response = random.choice(brooklyn_99_quotes)
     await ctx.send(response)
 
-# @client.slash_command(name="test", guild_ids=[167319816649179149]) #Add the guild ids in which the slash command will appear. If it should be in all, remove the argument, but note that it will take some time (up to an hour) to register the command if it's for all guilds.
-# async def first_slash(ctx): 
-#     await ctx.respond("You executed the slash command!")
 
-client.run(TOKEN)
+@client.command(name='divs')
+async def divs(ctx):
+    response = "Yo cutie. Waccha up to?"
+    await ctx.send(response)
+
+@client.tree.command(guild=MY_GUILD)
+async def slash(interaction: discord.Interaction, number: int, string: str):
+    await interaction.response.send_message(f'Modify {number=} {string=}', ephemeral=True)
+
+client.tree.add_command(ai_group.AIgroup(client, config), guild=MY_GUILD)
+
+if __name__ == '__main__':
+    # logger.info('Starting Bot')
+    client.run(TOKEN)
