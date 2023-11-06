@@ -1,28 +1,27 @@
 import logging
 from dotenv import load_dotenv
 
-load_dotenv()
-
 def getLogLevel(level = None):
 	if not level:
 		level = os.getenv('LOG_LEVEL', default = 'DEBUG')
-	
+
 	if level == 'DEBUG':
 		return logging.DEBUG
-	if level == 'INFO':
+	elif level == 'INFO':
 		return logging.INFO
-	if level == 'WARNING':
+	elif level == 'WARNING':
 		return logging.WARNING
-	if level == 'ERROR':
+	elif level == 'ERROR':
 		return logging.ERROR
-	if level == 'CRITICAL':
+	elif level == 'CRITICAL':
 		return logging.CRITICAL
+	else:
+		logging.basicConfig()
+		logger = logging.getLogger(__name__)
+		logger.setLevel(logging.WARNING)
 
-	logging.basicConfig()
-	logger = logging.getLogger(__name__)
-	logger.setLevel(logging.DEBUG)
+		logger.info(f"Invalid log level {level}")
 
-	logger.info(f"Invalid log level {level}")
 	return logging.DEBUG
 
 def createUrl(addr, port, resource_uri = None):

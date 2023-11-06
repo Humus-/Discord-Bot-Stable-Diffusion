@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 ENV = 'dev'
 
-# might need this to add 
+# might need this to add bigger model later.
 if ENV == 'dev':
 	app.debug = True
 	print('In dev section')

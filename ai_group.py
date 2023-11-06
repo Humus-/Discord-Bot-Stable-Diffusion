@@ -7,8 +7,7 @@ import aiohttp
 
 class AIgroup(app_commands.Group):
     """Manage general commands"""
-    def __init__(self, bot: commands.Bot, config):
-        print(f'comfig yyep {type(config)}')
+    def __init__(self, bot: commands.Bot, config: dict[str, any]):
         super().__init__()
         self.name = "ai"
         self.bot = bot
@@ -21,16 +20,23 @@ class AIgroup(app_commands.Group):
         async with aiohttp.ClientSession() as session:
             service_url = createUrl(self.config['model_server']['chat_server'], self.config['model_server']['chat_port'], self.config['model_server']['chat_uri'])
             async with session.get(service_url) as r:
-                print(r)
                 if r.status == 200:
-                    # js = await r.json()
-                    return await interaction.response.send_message('Bullah di jana mai kaun')
+                    js = await r.json()
+                    # TODO: log the packet here
+                    return await interaction.response.send_message(js['message'])
                     # await channel.send(js['file'])
                 else:
-                    return await interaction.response.send_message('Uff teri galti...')
+                    return await interaction.response.send_message('Uff kuch to galti hui...')
 
 
     @app_commands.command()
     async def dream(self, interaction: discord.Interaction):
         """tells you what version of the bot software is running."""
-        await interaction.response.send_message('This is an untested test version')
+        await interaction.response.send_message('This is not implemented yet')
+
+
+    # @app_commands.command()
+    # async def execute(self, interaction: discord.Interaction, *args: str):
+    #     """Takes different commands. Send help to know more"""
+    #     print(f'args {args}')
+    #     await interaction.response.send_message('This is an untested test version')
