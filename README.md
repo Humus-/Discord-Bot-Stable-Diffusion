@@ -20,4 +20,4 @@ TODO tasks:
 - Create a docker file
 - Add the LLM (currently it doesn't fit in the VRAM, tested on google collab, but not moved here)
 - Fix logger. (Discord has its own logger?)
-- 
+- Check cTransformer[cuda] vs Transformer
