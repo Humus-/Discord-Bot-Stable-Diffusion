@@ -6,7 +6,6 @@ llm_obj = None
 
 def start_model():
 	# Set gpu_layers to the number of layers to offload to GPU. Set to 0 if no GPU acceleration is available on your system.
-	print(f'load once')
 	global llm_obj
 	llm_obj = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instruct-v0.1-GGUF",
 		model_file="mistral-7b-instruct-v0.1.Q3_K_L.gguf",
@@ -80,5 +79,4 @@ def image_chat():
 		}
 
 if __name__ == '__main__':
-	print(f'call me once')
 	app.run()
