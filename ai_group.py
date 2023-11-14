@@ -53,13 +53,30 @@ class AIgroup(app_commands.Group):
 
 
     @app_commands.command()
-    async def dream(self, interaction: discord.Interaction):
+    async def dream(self, interaction: discord.Interaction, query: str):
         """tells you what version of the bot software is running."""
+        print(f'in dream {query}')
         await interaction.response.send_message('This is not implemented yet')
 
 
-    # @app_commands.command()
-    # async def execute(self, interaction: discord.Interaction, *args: str):
-    #     """Takes different commands. Send help to know more"""
-    #     print(f'args {args}')
-    #     await interaction.response.send_message('This is an untested test version')
+    @app_commands.command()
+    async def execute(self, interaction: discord.Interaction, args: str):
+        """Takes different commands. Send help to know more"""
+        print(f'args {args}')
+        if args == 'help':
+            return await interaction.response.send_message('This is an not implemented yet')
+        elif args.startswith('dream ') or args == 'dream':
+            query = args[5:]
+            if not query.strip():
+                query = "Something gamey"
+
+            return await self.dream(interaction, query)
+        elif args.startswith('chat ') or args == 'chat':
+            query = args[4:]
+            if not query.strip():
+                return await interaction.response.send_message('I need some command hooman!')
+
+            return await self.hello(interaction, query)
+
+
+        return await interaction.response.send_message('Unknown command use help for list of valid commands')
