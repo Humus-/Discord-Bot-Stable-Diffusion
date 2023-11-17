@@ -13,8 +13,16 @@ PUBLIC_KEY=<YOUR_PUBLIC_KEY>
 ```
 - Install the requirements
 ```
-pip install -e .
+pip install -r requirements.txt
 ```
+- Go to ai_server folder and run the demo ai server. (Instructions in the readme of that folder)
+	Optional if you have a different server. Then you need to change the server address in config.yml
+- Once the other services are ready, run
+```
+python bot.py
+```
+
+Now your bot is connected to discord and ready to recieve messages.
 
 TODO tasks:
 - Create a docker file
