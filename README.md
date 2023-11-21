@@ -30,3 +30,4 @@ TODO tasks:
 - Fix logger. (Discord has its own logger?)
 - Check cTransformer[cuda] vs Transformer
 - Fix TODOs in the code
+- Remove the jupyter notebook. It's skewing github stats
