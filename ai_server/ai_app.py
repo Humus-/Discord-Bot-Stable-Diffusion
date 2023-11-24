@@ -2,12 +2,15 @@ import os
 from flask import Flask, render_template, request
 from ctransformers import AutoModelForCausalLM
 
+
+ENV = 'dev'
+
 llm_obj = None
 # gonna make the flags as a config parameter later. Maybe even a pub sub thing for the server
 FLAG_CHAT = 'chat'
 FLAG_IMAGE = 'image'
 MODEL_FALGS = {
-	FLAG_CHAT: True
+	FLAG_CHAT: True,
 	FLAG_IMAGE: False
 }
 
@@ -34,8 +37,6 @@ class ModelRunnerFlask(Flask):
 		super(ModelRunnerFlask, self).run(host=host, port=port, debug=debug, load_dotenv=load_dotenv, **options)
 
 app = ModelRunnerFlask(__name__)
-
-ENV = 'dev'
 
 # might need this to add bigger model later.
 if ENV == 'dev':
