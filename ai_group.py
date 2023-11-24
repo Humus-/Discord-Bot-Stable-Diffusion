@@ -41,15 +41,18 @@ class AIgroup(app_commands.Group):
         async with aiohttp.ClientSession() as session:
             request_data = {"query": query}
             service_url = createUrl(self.config['model_server']['chat_server'], self.config['model_server']['chat_port'], self.config['model_server']['chat_uri'])
+
             async with session.post(service_url, data = request_data) as r:
+                await interaction.response.defer(ephemeral = True)
+
                 if r.status == 200:
                     js = await r.json()
-                    chat_msg = js.get('message', 'Looks like the server sent something weird. Gotta protect you from it.')
+                    chat_msg = js.get('message', 'Looks like the server sent something weird. Gotta protect your fragile mind from it.')
                     self.query_logger.info(f'Query: {query}, response: {js}')
-                    return await interaction.response.send_message(chat_msg)
+                    return await interaction.followup.send(chat_msg)
                     # await channel.send(js['file'])
                 else:
-                    return await interaction.response.send_message('Uff kuch to galti hui...')
+                    return await interaction.followup.send('Uff kuch to galti hui...')
 
 
     @app_commands.command()

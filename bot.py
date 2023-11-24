@@ -45,7 +45,9 @@ load_config()
 #             await channel.send(js['file'])
 
 MY_GUILD = discord.Object(id=167319816649179149)
-class CustomClient(commands.Bot):
+
+# extending from Bot. Since it inherits Client, so this has more features.
+class Client(commands.Bot):
     async def on_ready(self):
         await self.tree.sync(guild=MY_GUILD)
 
@@ -89,7 +91,7 @@ class CustomClient(commands.Bot):
 # switch between these 2 as activity to mess with people
 watching = discord.Activity(name='you intently', type = discord.ActivityType.watching)
 playing = discord.Game(name='with life')
-client = CustomClient(intents = intents, command_prefix = '!', activity = watching)  # or activity = playing
+client = Client(intents = intents, command_prefix = '!', activity = watching)  # or activity = playing
 
 @client.event
 async def on_error(event, *args, **kwargs):
