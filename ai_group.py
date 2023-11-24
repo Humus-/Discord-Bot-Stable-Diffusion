@@ -5,6 +5,7 @@ from discord import app_commands
 from discord.ext import commands
 from utils.utils import createUrl
 
+import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -36,19 +37,23 @@ class AIgroup(app_commands.Group):
 
     @app_commands.command(name = 'chat')
     async def hello(self, interaction: discord.Interaction, query: str):
-        # await interaction.response.send_message('Hello')
 
         async with aiohttp.ClientSession() as session:
-            request_data = {"query": query}
-            service_url = createUrl(self.config['model_server']['chat_server'], self.config['model_server']['chat_port'], self.config['model_server']['chat_uri'])
+            request_data = {
+                'command_type': 'chat',
+                "query": query
+            }
+            service_url = createUrl(self.config['model_server']['chat_server'],
+                self.config['model_server']['chat_port'],
+                self.config['model_server']['chat_uri'])
+
+            await interaction.response.defer(thinking = True)  # don't put this after the server call. The delay can be more than 3 secs and cause err on client side.
 
             async with session.post(service_url, data = request_data) as r:
-                await interaction.response.defer(ephemeral = True)
-
                 if r.status == 200:
                     js = await r.json()
                     chat_msg = js.get('message', 'Looks like the server sent something weird. Gotta protect your fragile mind from it.')
-                    self.query_logger.info(f'Query: {query}, response: {js}')
+                    self.query_logger.info(f'Query: {query}, response: {js}')  # logging for checking responses later.
                     return await interaction.followup.send(chat_msg)
                     # await channel.send(js['file'])
                 else:
