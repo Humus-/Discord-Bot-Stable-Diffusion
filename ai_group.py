@@ -5,6 +5,8 @@ from discord import app_commands
 from discord.ext import commands
 from utils.utils import createUrl
 
+from openai import OpenAI
+
 import datetime
 import logging
 from logging.handlers import RotatingFileHandler
@@ -12,6 +14,7 @@ from logging.handlers import RotatingFileHandler
 import aiohttp
 
 class AIgroup(app_commands.Group):
+    openai_client = None
     """Manage general commands"""
     def __init__(self, bot: commands.Bot, config: dict[str, any]):
         super().__init__()
@@ -34,6 +37,10 @@ class AIgroup(app_commands.Group):
         self.name = "ai"
         self.bot = bot
         self.config = config
+
+        # self.openai_client = None
+        if self.config['chat_gpt_fallback'] and not AIgroup.openai_client:
+            AIgroup.openai_client = OpenAI()
 
     @app_commands.command(name = 'chat')
     async def hello(self, interaction: discord.Interaction, query: str):
@@ -88,3 +95,23 @@ class AIgroup(app_commands.Group):
 
 
         return await interaction.response.send_message('Unknown command use help for list of valid commands')
+
+
+    @staticmethod
+    async def get_completion(prompt, model="gpt-3.5-turbo"):
+        """
+        Use OpenAI API and get a response.
+
+        Ignored most of the arguments for now.
+        """
+        try:
+            messages = [{"role": "user", "content": prompt}]
+            response = await AIgroup.openai_client.chat.completions.create(model=model,
+            messages=messages,
+            temperature=0.5)
+
+            return response.choices[0].message["content"]
+        except openai.RateLimitError:
+            return 'Rate limit error'
+        except:
+            return "Fallback error"
