@@ -1,6 +1,6 @@
 # Flask app for running the models
 
-Just adding a quick app in the same repo.
+Just adding a quick app in the same repo. This does not handle much
 This can be run on a separate machine. Even the different models can be handled by different servers. All configurable by config.yml
 
 For testing you can use the command
