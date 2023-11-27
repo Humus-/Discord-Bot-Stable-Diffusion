@@ -56,15 +56,28 @@ class AIgroup(app_commands.Group):
 
             await interaction.response.defer(thinking = True)  # don't put this after the server call. The delay can be more than 3 secs and cause err on client side.
 
-            async with session.post(service_url, data = request_data) as r:
-                if r.status == 200:
-                    js = await r.json()
-                    chat_msg = js.get('message', 'Looks like the server sent something weird. Gotta protect your fragile mind from it.')
-                    self.query_logger.info(f'Query: {query}, response: {js}')  # logging for checking responses later.
-                    return await interaction.followup.send(chat_msg)
-                    # await channel.send(js['file'])
+            try:
+                async with session.post(service_url, data = request_data) as r:
+                    if r.status == 200:
+                        js = await r.json()
+                        chat_msg = js.get('message', 'Looks like the server sent something weird. Gotta protect your fragile mind from it.')
+                        self.query_logger.info(f'Query: {query}, response: {js}')  # logging for checking responses later.
+                        return await interaction.followup.send(chat_msg)
+                        # await channel.send(js['file'])
+                    elif self.config['chat_gpt_fallback']:
+                        msg = await self.get_completion(query)
+                        return await interaction.followup.send(msg)
+                    else:
+                        return await interaction.followup.send('Uff kuch to galti hui...')
+            except:
+                if self.config['chat_gpt_fallback']:
+                    msg = await self.get_completion(query)
+
+                    return await interaction.followup.send(msg)
+
                 else:
-                    return await interaction.followup.send('Uff kuch to galti hui...')
+                    msg = await interaction.followup.send('Tera server to gaya!')
+
 
 
     @app_commands.command()
