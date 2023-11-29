@@ -1,11 +1,12 @@
 import os
 from flask import Flask, render_template, request
+from flask import Response
 from ctransformers import AutoModelForCausalLM
+import torch
 
 
 ENV = 'dev'
 
-llm_obj = None
 # gonna make the flags as a config parameter later. Maybe even a pub sub thing for the server
 FLAG_CHAT = 'chat'
 FLAG_IMAGE = 'image'
@@ -14,13 +15,47 @@ MODEL_FALGS = {
 	FLAG_IMAGE: False
 }
 
-def start_model():
-	# Set gpu_layers to the number of layers to offload to GPU. Set to 0 if no GPU acceleration is available on your system.
+llm_obj = None
+stable_diffusion_base_obj = None
+stable_diffusion_refiner_obj = None
+
+def start_models(self, force = False):
+	# should we create it fresh, or if force is true, then we need to reinit
+	if MODEL_FALGS[FLAG_CHAT]:
+		start_chat_model()
+	else:
+		start_stable_diffusion()
+
+def start_chat_model():
 	global llm_obj
+
+	# Set gpu_layers to the number of layers to offload to GPU. Set to 0 if no GPU acceleration is available on your system.
 	llm_obj = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instruct-v0.1-GGUF",
 		model_file="mistral-7b-instruct-v0.1.Q3_K_L.gguf",
 		model_type="mistral",
 		gpu_layers=50)
+
+def start_stable_diffusion():
+	from diffusers import DiffusionPipeline
+
+	global stable_diffusion_base_obj
+	global stable_diffusion_refiner_obj
+	stable_diffusion_base_obj = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0",
+		torch_dtype=torch.float16,
+		use_safetensors=True,
+		variant="fp16")
+	stable_diffusion_base_obj.to("cuda")
+
+	stable_diffusion_refiner_obj = DiffusionPipeline.from_pretrained(
+		"stabilityai/stable-diffusion-xl-refiner-1.0",
+		text_encoder_2=stable_diffusion_base_obj.text_encoder_2,
+		vae=stable_diffusion_base_obj.vae,
+		torch_dtype=torch.float16,
+		use_safetensors=True,
+		variant="fp16",
+	)
+
+	stable_diffusion_refiner_obj.to("cuda")
 
 
 # run after flask startup but before first request.
@@ -32,7 +67,7 @@ class ModelRunnerFlask(Flask):
 			with self.app_context():
 				# TODO: make this multi threaded?
 				self.logger.info("Loading the model")
-				start_model()
+				start_models(force = False)
 
 		super(ModelRunnerFlask, self).run(host=host, port=port, debug=debug, load_dotenv=load_dotenv, **options)
 

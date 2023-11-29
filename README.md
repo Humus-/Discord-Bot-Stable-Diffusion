@@ -11,6 +11,12 @@ APP_ID=<YOUR_APP_ID>
 DISCORD_TOKEN=<YOUR_BOT_TOKEN>
 PUBLIC_KEY=<YOUR_PUBLIC_KEY>
 ```
+
+*In case you enable Chat GPT support add the below key to your .env file*
+```
+OPENAI_API_KEY=
+```
+
 - Install the requirements
 ```
 pip install -r requirements.txt
@@ -25,9 +31,9 @@ python bot.py
 Now your bot is connected to discord and ready to recieve messages.
 
 TODO tasks:
-- Create a docker file
 - Add the LLM (currently it doesn't fit in the VRAM, tested on google collab, but not moved here)
 - Fix logger. (Discord has its own logger?)
 - Check cTransformer[cuda] vs Transformer
 - Fix TODOs in the code
 - Remove the jupyter notebook. It's skewing github stats
+- Add a timeout check for bot thinking, in case the model server does not respond back, or there was an error.
