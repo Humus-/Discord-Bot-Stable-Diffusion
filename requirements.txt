@@ -1,4 +1,4 @@
 python-dotenv
 requests
 discord.py
-
+aiofiles

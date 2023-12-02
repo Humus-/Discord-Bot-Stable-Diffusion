@@ -1,5 +1,6 @@
 import os
 from flask import Flask, render_template, request
+from flask import send_file
 from flask import Response
 from ctransformers import AutoModelForCausalLM
 import torch
@@ -118,17 +119,30 @@ def text_chat():
 	}
 
 
-@app.route('/img_chat', methods=['POST'])
+@app.route('/img_chat', methods=['POST', 'GET'])
 def image_chat():
 	# TODO: Auth
-	if request.method == 'POST':
-		content = request.values
+	if not MODEL_FALGS[FLAG_IMAGE]:
+		message = "This service is not loaded on the current server."
 
-		query = content.get('query', default = '')
-		# TODO: Handle blank
-		return {
-			"image": "asdf"
+		response_payload = {
+			"bot_name": 'Admin',
+			"message": message
 		}
+
+		return Response(response_payload, status = 200, mimetype = 'application/json')
+
+
+	return send_file('../stable-diffusion-images-generation.png')  # mimetype='image/gif'
+
+	# if request.method == 'POST':
+	# 	content = request.values
+
+	# 	query = content.get('query', default = '')
+	# 	# TODO: Handle blank
+	# 	return {
+	# 		"image": "asdf"
+	# 	}
 
 if __name__ == '__main__':
 	app.run()
