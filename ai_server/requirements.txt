@@ -6,3 +6,9 @@ torchvision
 # with or without cuda?? cuda is used with GPU accelaration. Check if my system supports this.
 # do we still need transformers??
 ctransformers[cuda]
+
+
+diffusers
+invisible_watermark
+accelerate
+safetensors

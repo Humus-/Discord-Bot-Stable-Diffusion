@@ -11,7 +11,9 @@ import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 
+# import asyncio
 import aiohttp
+import aiofiles
 
 class AIgroup(app_commands.Group):
     openai_client = None
@@ -82,12 +84,42 @@ class AIgroup(app_commands.Group):
 
     @app_commands.command()
     async def dream(self, interaction: discord.Interaction, query: str):
-        """tells you what version of the bot software is running."""
-        print(f'in dream {query}')
-        await interaction.response.send_message('This is not implemented yet')
+        """Sends a request to the model server and makes it generate an image."""
+
+        async with aiohttp.ClientSession() as session:
+            request_data = {
+                'command_type': 'dream',
+                "query": query
+            }
+            service_url = createUrl(self.config['model_server']['stable_diffusion_server'],
+                self.config['model_server']['stable_diffusion_port'],
+                self.config['model_server']['stable_diffusion_uri'])
+
+            await interaction.response.defer(thinking = True)  # don't put this after the server call. The delay can be more than 3 secs and cause err on client side.
+
+            async with session.post(service_url, data = request_data) as resp:
+                if resp.status == 200:
+                    ext = 'img'
+                    if resp.content_type == 'image/png':
+                        ext = 'png'
+                    filename = './data/reply_img.' + ext
+
+                    async with aiofiles.open(filename, mode='wb') as img_file:
+                        await img_file.write(await resp.read())
+
+                        await interaction.followup.send(file = discord.File(filename))
+
+                #     chat_msg = js.get('message', 'Looks like the server sent something weird. Gotta protect your fragile mind from it.')
+                #     self.query_logger.info(f'Query: {query}, response: {js}')
+                #     return await interaction.followup.send(chat_msg)
+                #     # await channel.send(js['file'])
+                # else:
+                #     return await interaction.followup.send('Uff kuch to galti hui...')
+
+        # await interaction.response.send_message('This is not implemented yet')
 
 
-    @app_commands.command()
+    @app_commands.command(description = 'Execute commmand')
     async def execute(self, interaction: discord.Interaction, args: str):
         """Takes different commands. Send help to know more"""
         print(f'args {args}')
