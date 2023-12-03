@@ -6,3 +6,4 @@ model_server:
   chat_server: localhost
   chat_port: 5000
   chat_uri: text_chat
+chat_gpt_fallback: True

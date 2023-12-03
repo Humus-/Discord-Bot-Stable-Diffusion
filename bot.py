@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import aiohttp
 import random
 import ai_group
+import openai
 import logging
 import yaml
 from utils.utils import createUrl
@@ -67,6 +68,9 @@ class Client(commands.Bot):
         # await g_channel.send('Hello here!');
 
         print(f'{self.user} has connected to Discord!')
+
+        if config['chat_gpt_fallback']:
+            openai.api_key = os.getenv('OPENAI_API_KEY')
 
     async def on_message(self, message):
         # don't respond to ourselves
