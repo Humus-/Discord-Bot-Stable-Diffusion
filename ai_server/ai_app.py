@@ -22,7 +22,6 @@ def start_model():
 		model_type="mistral",
 		gpu_layers=50)
 
-
 # run after flask startup but before first request.
 class ModelRunnerFlask(Flask):
 	def run(self, host=None, port=None, debug=None, load_dotenv=True, **options):
