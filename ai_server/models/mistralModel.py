@@ -17,4 +17,11 @@ class MistralModel(Model):
 			gpu_layers=50)
 
 	def inference(self, prompt):
-		pass
+		result = {
+			"response": 'No response'
+			"other_details": 'None'
+		}
+		if self.isInited():
+			result['response'] = self.model_obj(query)
+
+		return result
