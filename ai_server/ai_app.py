@@ -11,7 +11,7 @@ FLAG_CHAT = 'chat'
 FLAG_IMAGE = 'image'
 MODEL_FALGS = {
 	FLAG_CHAT: True,
-	FLAG_IMAGE: False
+	FLAG_IMAGE: True
 }
 
 def start_model():
@@ -32,8 +32,32 @@ class ModelRunnerFlask(Flask):
 				# TODO: make this multi threaded?
 				self.logger.info("Loading the model")
 				start_model()
+				# self.start_models(force = False)
 
 		super(ModelRunnerFlask, self).run(host=host, port=port, debug=debug, load_dotenv=load_dotenv, **options)
+
+	def start_models(self, force = False):
+		# create it fresh?, or if force is true, then we need to reinit
+		shouldTryInitChatModel = (self.chat_model and self.chat_model.isInited()) or force
+		if MODEL_FALGS[FLAG_CHAT] and shouldTryInitChatModel:
+			if self.chat_model:
+				self.chat_model.cleanup()
+
+			self.chat_model = MistralModel()
+			self.chat_model.setup_model()
+			
+			# start_chat_model()
+
+		# create it fresh, or if force is true, then we need to reinit
+		shouldTryInitImageModel = (self.image_model and self.image_model.isInited()) or force
+		if MODEL_FALGS[FLAG_IMAGE] and shouldTryInitImageModel:
+			if self.image_model:
+				self.image_model.cleanup()
+
+			self.image_model = StableDiffusion()
+			self.image_model.setup_model()
+
+			# start_stable_diffusion()
 
 app = ModelRunnerFlask(__name__)
 
@@ -93,6 +117,10 @@ def image_chat():
 		return {
 			"image": "asdf"
 		}
+		return Response(response_payload, status = 200, mimetype = 'application/json')
+
+
+	return send_file('../stable-diffusion-images-generation.png')  # mimetype='image/gif'
 
 if __name__ == '__main__':
 	app.run()
