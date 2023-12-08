@@ -24,15 +24,22 @@ def start_model():
 
 # run after flask startup but before first request.
 class ModelRunnerFlask(Flask):
+	def init_vars(self):
+		# don't want to use constructor. In case new update adds more arguments
+		self.chat_model = None
+		self.image_model = None
+
 	def run(self, host=None, port=None, debug=None, load_dotenv=True, **options):
+		self.init_vars()
+
 		if not (app.debug or os.environ.get("FLASK_ENV") == "development") or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
 		# if os.getenv('WERKZEUG_RUN_MAIN') == 'true':
 		# the app could reload, but this won't be executed again
 			with self.app_context():
 				# TODO: make this multi threaded?
 				self.logger.info("Loading the model")
-				start_model()
-				# self.start_models(force = False)
+				# start_model()
+				self.start_models(force = False)
 
 		super(ModelRunnerFlask, self).run(host=host, port=port, debug=debug, load_dotenv=load_dotenv, **options)
 

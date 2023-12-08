@@ -11,12 +11,29 @@ class MistralModel(Model):
 		# TODO make the quantization configurable
 
 	def setup_model(self):
+		print(f'inited model')
+
+		# config = {'temperature':0.00, 'context_length':4000,}
+		# self.model_obj = CTransformers(model='TheBloke/Mistral-7B-codealpaca-lora-GGUF',
+		#								model_type='mistral',
+		#								config=config,,
+		#								#stream=True,
+		#								callbacks=[async_handler]
+		#								)
+
 		self.model_obj = AutoModelForCausalLM.from_pretrained(self.modelNamespace,
 			model_file=self.modelFile,
 			model_type="mistral",
 			gpu_layers=50)
 
 	def inference(self, prompt):
+		# prompt = PromptTemplate.from_template("You are a gamer, respond to the following : {query}")
+		# chain = LLMChain(llm = self.model_obh, prompt = prompt)
+
+		# return Response(chain.run(query))
+
+
+
 		result = {
 			"response": 'No response'
 			"other_details": 'None'
