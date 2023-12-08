@@ -3,7 +3,8 @@ class MistralModel(Model):
 		"""
 		q - Quantization bits to be used, eg: 32 bit, 16 bit, 8 bit, 4 bit
 		"""
-		Model.__init__(self)
+		super.__init__(self)
+
 		self.name = 'Mistral'
 		self.description = 'Mistral model for chat LLM'
 		self.modelNamespace = "TheBloke/Mistral-7B-Instruct-v0.1-GGUF"
@@ -36,7 +37,8 @@ class MistralModel(Model):
 
 		result = {
 			"response": 'No response'
-			"other_details": 'None'
+			"other_details": 'None',
+			'bot_name': "Mistral"
 		}
 		if self.isInited():
 			result['response'] = self.model_obj(query)

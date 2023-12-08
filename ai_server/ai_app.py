@@ -5,22 +5,13 @@ from ctransformers import AutoModelForCausalLM
 
 ENV = 'dev'
 
-llm_obj = None
 # gonna make the flags as a config parameter later. Maybe even a pub sub thing for the server
 FLAG_CHAT = 'chat'
 FLAG_IMAGE = 'image'
 MODEL_FALGS = {
 	FLAG_CHAT: True,
-	FLAG_IMAGE: True
+	FLAG_IMAGE: False
 }
-
-def start_model():
-	# Set gpu_layers to the number of layers to offload to GPU. Set to 0 if no GPU acceleration is available on your system.
-	global llm_obj
-	llm_obj = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instruct-v0.1-GGUF",
-		model_file="mistral-7b-instruct-v0.1.Q3_K_L.gguf",
-		model_type="mistral",
-		gpu_layers=50)
 
 # run after flask startup but before first request.
 class ModelRunnerFlask(Flask):
@@ -86,30 +77,22 @@ def text_chat():
 	if request.method == 'POST':
 		pass
 
-	if not MODEL_FALGS[FLAG_CHAT]:
-		message = "This service is not loaded on the current server."
-		return {
-		"bot_name": 'Admin',
-		"message": message
-	}
-
-	print(f'values: {request.values}, args:{request.args}')
 	content = request.values
 
 	query = content.get('query', default = '')
 	# TODO: handle blank
-	# "List the top 20 most famous presidents of the United states."
+	# eg: "List the top 20 most famous presidents of the United states."
 	print(f'query: {query}')
-	message = "Yo boi, how you doing? Looks like my synthetic brain is not active yet."
-	bot_name = "None"
-	if llm_obj:
-		bot_name = llm_obj.model_type
-		message = llm_obj(query)
+
+	if self.chat_model:
+		message = self.chat_model.inference()
 		print(f'message: {message}')
-	# return render_template('insert_success.html', message='Application Rejected!')
+		return message
+
+	message = "Yo boi, how you doing? Looks like my synthetic brain is not active yet."
 	return {
-		"bot_name": bot_name,
-		"message": message
+		"bot_name": 'Admin',
+		"response": 'This service is not loaded on the current server.'
 	}
 
 

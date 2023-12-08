@@ -60,7 +60,7 @@ class AIgroup(app_commands.Group):
                 async with session.post(service_url, data = request_data) as r:
                     if r.status == 200:
                         js = await r.json()
-                        chat_msg = js.get('message', 'Looks like the server sent something weird. Gotta protect your fragile mind from it.')
+                        chat_msg = js.get('response', 'Looks like the server sent something weird. Gotta protect your fragile mind from it.')
                         self.query_logger.info(f'Query: {query}, response: {js}')  # logging for checking responses later.
                         return await interaction.followup.send(chat_msg)
                         # await channel.send(js['file'])
