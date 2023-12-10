@@ -2,8 +2,8 @@ import os
 from flask import Flask, render_template, request
 from flask import send_file
 from flask import Response
-from ctransformers import AutoModelForCausalLM
-import torch
+
+from models.mistralModel import MistralModel
 
 
 ENV = 'dev'
@@ -16,61 +16,51 @@ MODEL_FALGS = {
 	FLAG_IMAGE: False
 }
 
-llm_obj = None
-stable_diffusion_base_obj = None
-stable_diffusion_refiner_obj = None
-
-def start_models(self, force = False):
-	# should we create it fresh, or if force is true, then we need to reinit
-	if MODEL_FALGS[FLAG_CHAT]:
-		start_chat_model()
-	else:
-		start_stable_diffusion()
-
-def start_chat_model():
-	global llm_obj
-
-	# Set gpu_layers to the number of layers to offload to GPU. Set to 0 if no GPU acceleration is available on your system.
-	llm_obj = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instruct-v0.1-GGUF",
-		model_file="mistral-7b-instruct-v0.1.Q3_K_L.gguf",
-		model_type="mistral",
-		gpu_layers=50)
-
-def start_stable_diffusion():
-	from diffusers import DiffusionPipeline
-
-	global stable_diffusion_base_obj
-	global stable_diffusion_refiner_obj
-	stable_diffusion_base_obj = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0",
-		torch_dtype=torch.float16,
-		use_safetensors=True,
-		variant="fp16")
-	stable_diffusion_base_obj.to("cuda")
-
-	stable_diffusion_refiner_obj = DiffusionPipeline.from_pretrained(
-		"stabilityai/stable-diffusion-xl-refiner-1.0",
-		text_encoder_2=stable_diffusion_base_obj.text_encoder_2,
-		vae=stable_diffusion_base_obj.vae,
-		torch_dtype=torch.float16,
-		use_safetensors=True,
-		variant="fp16",
-	)
-
-	stable_diffusion_refiner_obj.to("cuda")
-
-
 # run after flask startup but before first request.
 class ModelRunnerFlask(Flask):
+	def init_vars(self):
+		# don't want to use constructor. In case new update adds more arguments
+		self.chat_model = None
+		self.image_model = None
+
 	def run(self, host=None, port=None, debug=None, load_dotenv=True, **options):
+		self.init_vars()
+
 		if not (app.debug or os.environ.get("FLASK_ENV") == "development") or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
 		# if os.getenv('WERKZEUG_RUN_MAIN') == 'true':
 		# the app could reload, but this won't be executed again
 			with self.app_context():
 				# TODO: make this multi threaded?
 				self.logger.info("Loading the model")
-				start_models(force = False)
+				# start_model()
+				self.start_models(force = False)
 
 		super(ModelRunnerFlask, self).run(host=host, port=port, debug=debug, load_dotenv=load_dotenv, **options)
+
+	def start_models(self, force = False):
+		# create it fresh?, or if force is true, then we need to reinit
+		shouldTryInitChatModel = force or not (self.chat_model and self.chat_model.isInited())
+		if MODEL_FALGS[FLAG_CHAT] and shouldTryInitChatModel:
+			print(f'intit now: {self.chat_model}')
+			if self.chat_model:
+				print(f'None?: {self.chat_model}')
+				self.chat_model.cleanup()
+
+			self.chat_model = MistralModel(q = 4)
+			self.chat_model.setup_model()
+			
+			# start_chat_model()
+
+		# create it fresh, or if force is true, then we need to reinit
+		shouldTryInitImageModel = force or not (self.image_model and self.image_model.isInited())
+		if MODEL_FALGS[FLAG_IMAGE] and shouldTryInitImageModel:
+			if self.image_model:
+				self.image_model.cleanup()
+
+			self.image_model = StableDiffusion()
+			self.image_model.setup_model()
+
+			# start_stable_diffusion()
 
 app = ModelRunnerFlask(__name__)
 
@@ -92,30 +82,22 @@ def text_chat():
 	if request.method == 'POST':
 		pass
 
-	if not MODEL_FALGS[FLAG_CHAT]:
-		message = "This service is not loaded on the current server."
-		return {
-		"bot_name": 'Admin',
-		"message": message
-	}
-
-	print(f'values: {request.values}, args:{request.args}')
 	content = request.values
 
 	query = content.get('query', default = '')
 	# TODO: handle blank
-	# "List the top 20 most famous presidents of the United states."
+	# eg: "List the top 20 most famous presidents of the United states."
 	print(f'query: {query}')
-	message = "Yo boi, how you doing? Looks like my synthetic brain is not active yet."
-	bot_name = "None"
-	if llm_obj:
-		bot_name = llm_obj.model_type
-		message = llm_obj(query)
+
+	if app.chat_model:
+		message = app.chat_model.inference(query)
 		print(f'message: {message}')
-	# return render_template('insert_success.html', message='Application Rejected!')
+		return message
+
+	message = "Yo boi, how you doing? Looks like my synthetic brain is not active yet."
 	return {
-		"bot_name": bot_name,
-		"message": message
+		"bot_name": 'Admin',
+		"response": 'This service is not loaded on the current server.'
 	}
 
 
@@ -129,6 +111,10 @@ def image_chat():
 			"bot_name": 'Admin',
 			"message": message
 		}
+		return Response(response_payload, status = 200, mimetype = 'application/json')
+
+
+	return send_file('../stable-diffusion-images-generation.png')  # mimetype='image/gif'
 
 		return Response(response_payload, status = 200, mimetype = 'application/json')
 
