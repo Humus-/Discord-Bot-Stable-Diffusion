@@ -87,7 +87,9 @@ class Client(commands.Bot):
 
         if message.content == 'show image':
             print('showing image')
-            await message.channel.send(file = discord.File('stable-diffusion-images-generation.png'))
+            # await message.channel.send(file = discord.File('stable-diffusion-images-generation.png'))
+
+            await message.channel.send(file = discord.File('./data/reply_img.png'))
 
 
         await self.process_commands(message)

@@ -1,5 +1,8 @@
 import os
 from flask import Flask, render_template, request
+from flask import send_file
+from flask import Response
+
 from models.mistralModel import MistralModel
 
 
@@ -98,21 +101,84 @@ def text_chat():
 	}
 
 
-@app.route('/img_chat', methods=['POST'])
+@app.route('/img_chat', methods=['POST', 'GET'])
 def image_chat():
 	# TODO: Auth
-	if request.method == 'POST':
-		content = request.values
+	if not MODEL_FALGS[FLAG_IMAGE]:
+		message = "This service is not loaded on the current server."
 
-		query = content.get('query', default = '')
-		# TODO: Handle blank
-		return {
-			"image": "asdf"
+		response_payload = {
+			"bot_name": 'Admin',
+			"message": message
 		}
 		return Response(response_payload, status = 200, mimetype = 'application/json')
 
 
 	return send_file('../stable-diffusion-images-generation.png')  # mimetype='image/gif'
 
+		return Response(response_payload, status = 200, mimetype = 'application/json')
+
+
+	return send_file('../stable-diffusion-images-generation.png')  # mimetype='image/gif'
+
+	# if request.method == 'POST':
+	# 	content = request.values
+
+	# 	query = content.get('query', default = '')
+	# 	# TODO: Handle blank
+	# 	return {
+	# 		"image": "asdf"
+	# 	}
+
 if __name__ == '__main__':
 	app.run()
+
+
+
+# !pip install diffusers -qq
+# !pip install invisible_watermark transformers accelerate safetensors -qq
+
+# from diffusers import DiffusionPipeline
+# import torch
+# base = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0",
+#                                          torch_dtype=torch.float16,
+#                                          use_safetensors=True,
+#                                          variant="fp16")
+# base.to("cuda")
+
+
+# refiner = DiffusionPipeline.from_pretrained(
+#     "stabilityai/stable-diffusion-xl-refiner-1.0",
+#     text_encoder_2=base.text_encoder_2,
+#     vae=base.vae,
+#     torch_dtype=torch.float16,
+#     use_safetensors=True,
+#     variant="fp16",
+# )
+
+# refiner.to("cuda")
+
+
+# n_steps = 40
+# high_noise_frac = 0.8
+
+# prompt = "A majestic lion jumping from a big stone at night"
+
+# # run both experts
+# image = base(
+#     prompt=prompt,
+#     num_inference_steps=n_steps,
+#     denoising_end=high_noise_frac,
+#     output_type="latent",
+# ).images
+
+# # image = image[0]
+
+# image = refiner(
+#     prompt=prompt,
+#     num_inference_steps=n_steps,
+#     denoising_start=high_noise_frac,
+#     image=image,
+# ).images[0]
+
+# image
