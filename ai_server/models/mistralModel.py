@@ -1,9 +1,12 @@
+from .model import Model
+from ctransformers import AutoModelForCausalLM
+
 class MistralModel(Model):
 	def __init__(self, q):
 		"""
 		q - Quantization bits to be used, eg: 32 bit, 16 bit, 8 bit, 4 bit
 		"""
-		super.__init__(self)
+		super().__init__()
 
 		self.name = 'Mistral'
 		self.description = 'Mistral model for chat LLM'
@@ -36,11 +39,11 @@ class MistralModel(Model):
 
 
 		result = {
-			"response": 'No response'
+			"response": 'No response',
 			"other_details": 'None',
 			'bot_name': "Mistral"
 		}
 		if self.isInited():
-			result['response'] = self.model_obj(query)
+			result['response'] = self.model_obj(prompt)
 
 		return result

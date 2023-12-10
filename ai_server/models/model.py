@@ -1,3 +1,4 @@
+from abc import abstractmethod
 import torch
 
 class Model:
@@ -7,15 +8,15 @@ class Model:
 		self.quant = 32 # default quantization
 		self.model_obj = None
 
-	def __del__(self):
-		self.cleanup()
+	# def __del__(self):
+	# 	self.cleanup()
 
 	@abstractmethod
 	def setup_model(self):
 		pass
 
 	def isInited(self):
-		return self.model_obj != None:
+		return self.model_obj != None
 
 	def getName(self):
 		return self.name
@@ -23,7 +24,7 @@ class Model:
 	def getModelDetails(self):
 		return {
 			'name': self.name,
-			'description': self.description
+			'description': self.description,
 			'quantization': self.quant
 		}
 

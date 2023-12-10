@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, request
-from ctransformers import AutoModelForCausalLM
+from models.mistralModel import MistralModel
 
 
 ENV = 'dev'
