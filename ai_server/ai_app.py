@@ -36,18 +36,20 @@ class ModelRunnerFlask(Flask):
 
 	def start_models(self, force = False):
 		# create it fresh?, or if force is true, then we need to reinit
-		shouldTryInitChatModel = (self.chat_model and self.chat_model.isInited()) or force
+		shouldTryInitChatModel = force or not (self.chat_model and self.chat_model.isInited())
 		if MODEL_FALGS[FLAG_CHAT] and shouldTryInitChatModel:
+			print(f'intit now: {self.chat_model}')
 			if self.chat_model:
+				print(f'None?: {self.chat_model}')
 				self.chat_model.cleanup()
 
-			self.chat_model = MistralModel()
+			self.chat_model = MistralModel(q = 4)
 			self.chat_model.setup_model()
 			
 			# start_chat_model()
 
 		# create it fresh, or if force is true, then we need to reinit
-		shouldTryInitImageModel = (self.image_model and self.image_model.isInited()) or force
+		shouldTryInitImageModel = force or not (self.image_model and self.image_model.isInited())
 		if MODEL_FALGS[FLAG_IMAGE] and shouldTryInitImageModel:
 			if self.image_model:
 				self.image_model.cleanup()
@@ -84,8 +86,8 @@ def text_chat():
 	# eg: "List the top 20 most famous presidents of the United states."
 	print(f'query: {query}')
 
-	if self.chat_model:
-		message = self.chat_model.inference()
+	if app.chat_model:
+		message = app.chat_model.inference(query)
 		print(f'message: {message}')
 		return message
 
