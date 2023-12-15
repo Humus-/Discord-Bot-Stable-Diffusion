@@ -81,6 +81,14 @@ class AIgroup(app_commands.Group):
                     msg = await interaction.followup.send('Tera server to gaya!')
 
 
+            # TODO: Add timeout for no reply case
+            # try:
+            #     await asyncio.wait(timeout=5)
+            # except asyncio.TimeoutError:
+            #     await interaction.followup.send('Tera server to gaya!')
+
+
+
 
     @app_commands.command()
     async def dream(self, interaction: discord.Interaction, query: str):
