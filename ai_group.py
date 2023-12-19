@@ -76,7 +76,6 @@ class AIgroup(app_commands.Group):
                     msg = await self.get_completion(query)
 
                     return await interaction.followup.send(msg)
-
                 else:
                     msg = await interaction.followup.send('Tera server to gaya!')
 
