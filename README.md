@@ -37,3 +37,16 @@ TODO tasks:
 - Fix TODOs in the code
 - Remove the jupyter notebook. It's skewing github stats
 - Add a timeout check for bot thinking, in case the model server does not respond back, or there was an error.
+
+
+- Rough things for blog aobut this project
+-- Why this project. For the memes and dota support while gaming
+-- What it can currently do.
+-- What I've learnt doing this so far. 
+-- Next things I want to try.
+-- Stretch goals
+-- runpod
+-- gcp app
+-- code cleanup
+-- streamlit? or node?
+-- Understanding bit more react while making the blog
