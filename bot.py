@@ -83,7 +83,7 @@ class Client(commands.Bot):
             await message.channel.send('pong')
 
         if message.content == 'raise exception':
-            raise discord.DiscordExceptio
+            raise discord.DiscordException
 
         if message.content == 'show image':
             print('showing image')
@@ -115,23 +115,9 @@ async def on_error(event, *args, **kwargs):
 # async def test(interaction):
 #     await interaction.response.send_message("Test")
 
-@client.command(name='99')
-async def nine_nine(ctx):
-    brooklyn_99_quotes = [
-        'I\'m the human form of the 💯 emoji.',
-        'Bingpot!',
-        (
-            'Cool. Cool cool cool cool cool cool cool, '
-            'no doubt no doubt no doubt no doubt.'
-        ),
-    ]
 
-    response = random.choice(brooklyn_99_quotes)
-    await ctx.send(response)
-
-
-@client.command(name='divs')
-async def divs(ctx):
+@client.command(name='catcall')
+async def tease(ctx):
     response = "Yo cutie. Waccha up to?"
     await ctx.send(response)
 
