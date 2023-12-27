@@ -1,5 +1,5 @@
 # Discord Bot for Stable Diffusion
-Create a discord bot that takes a user prompt and uses a text to Image model to send back an image
+A discord bot that responds to text and Image prompts with the help of different LLM models
 
 Developing this on 2 different systems. So will have to add a few more things over the MVP version.
 
