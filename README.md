@@ -39,7 +39,7 @@ TODO tasks:
 - Add a timeout check for bot thinking, in case the model server does not respond back, or there was an error.
 
 
-- Rough things for blog aobut this project
+<!-- - Rough things for blog aobut this project
 -- Why this project. For the memes and dota support while gaming
 -- What it can currently do.
 -- What I've learnt doing this so far. 
@@ -50,3 +50,5 @@ TODO tasks:
 -- code cleanup
 -- streamlit? or node?
 -- Understanding bit more react while making the blog
+- Using A111?
+ -->

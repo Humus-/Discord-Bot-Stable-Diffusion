@@ -19,6 +19,12 @@ class AIgroup(app_commands.Group):
     openai_client = None
     """Manage general commands"""
     def __init__(self, bot: commands.Bot, config: dict[str, any]):
+        """Initialize the commands related to the backend AI server.
+        Args:
+            bot (str): The bot client object.
+            config(dict): Application config. (Key value pair)
+        """
+
         super().__init__()
 
         # separate logger for debugging queries.
