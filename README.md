@@ -3,8 +3,17 @@ A discord bot that responds to text and Image prompts with the help of different
 
 Developing this on 2 different systems. So will have to add a few more things over the MVP version.
 
-Steps:
-- Clone the repo
+### How it Works
+
+    The bot connects to Discord using the credentials provided in the env file.
+    The bot currently hardcodes a specific channel on Discord.
+    The bot sends a request to generate an image based on the user's prompt to a separate server.
+    The bot waits for the server to send the response and shows a thinking prompt on discord.
+    The bot downloads the image and sends it to the channel.
+
+### Steps to run locally:
+1. Clone the repo
+
 - Create a .env file with the following information
 ```
 APP_ID=<YOUR_APP_ID>
@@ -29,6 +38,18 @@ python bot.py
 ```
 
 Now your bot is connected to discord and ready to recieve messages.
+
+### Docker steps
+TBD
+
+<!--
+Use docker to launch the project.
+```
+docker compose up
+# or run in the daemon mode
+docker compose up -d
+```
+-->
 
 TODO tasks:
 - Add the LLM (currently it doesn't fit in the VRAM, tested on google collab, but not moved here)
