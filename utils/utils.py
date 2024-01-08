@@ -1,5 +1,10 @@
 import logging
+import yaml
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+logger.setLevel(logging.DEBUG)
 
 def getLogLevel(level = None):
 	if not level:
@@ -16,10 +21,6 @@ def getLogLevel(level = None):
 	elif level == 'CRITICAL':
 		return logging.CRITICAL
 	else:
-		logging.basicConfig()
-		logger = logging.getLogger(__name__)
-		logger.setLevel(logging.WARNING)
-
 		logger.info(f"Invalid log level {level}")
 
 	return logging.DEBUG
@@ -35,3 +36,17 @@ def createUrl(addr, port, resource_uri = None):
 		url += "/" + resource_uri
 
 	return url
+
+def load_config(path):
+	config = None
+	logger = logging.getLogger(__name__)
+
+	with open(path, "r") as stream:
+		try:
+			config = yaml.safe_load(stream)
+
+			logger.info("Config Loaded")
+		except yaml.YAMLError as exc:
+			logger.error("Could not load config file")
+
+	return config

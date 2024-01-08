@@ -6,7 +6,7 @@ Developing this on 2 different systems. So will have to add a few more things ov
 ### How it Works
 
     The bot connects to Discord using the credentials provided in the env file.
-    The bot currently hardcodes a specific channel on Discord.
+    The bot currently hardcodes a specific channel on Discord (For testing).
     The bot sends a request to generate an image based on the user's prompt to a separate server.
     The bot waits for the server to send the response and shows a thinking prompt on discord.
     The bot downloads the image and sends it to the channel.
@@ -56,7 +56,6 @@ TODO tasks:
 - Fix logger. (Discord has its own logger?)
 - Check cTransformer[cuda] vs Transformer
 - Fix TODOs in the code
-- Remove the jupyter notebook. It's skewing github stats
 - Add a timeout check for bot thinking, in case the model server does not respond back, or there was an error.
 
 
