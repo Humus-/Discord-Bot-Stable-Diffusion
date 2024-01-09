@@ -7,8 +7,7 @@ import random
 import ai_group
 import openai
 import logging
-import yaml
-from utils.utils import createUrl
+from utils import utils
 
 from discord import app_commands
 from discord.ext import commands
@@ -21,22 +20,9 @@ CONFIG_PATH = "utils/config.yml"
 config = None
 
 # Logger
-logging.basicConfig()
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
-
-def load_config():
-    with open(CONFIG_PATH, "r") as stream:
-        try:
-            global config
-            config = yaml.safe_load(stream)
-
-            logger.info("Config Loaded")
-        except yaml.YAMLError as exc:
-            logger.error("Could not load config file")
-
-load_config()
+config = utils.load_config(CONFIG_PATH)
 
 ####INIT ENDS
 
@@ -122,6 +108,18 @@ async def slash(interaction: discord.Interaction, number: int, string: str):
 # Add the slash commands
 client.tree.add_command(ai_group.AIgroup(client, config), guild=MY_GUILD)
 
+
+def create_discord_client(img_client: ImageClient) -> discord.Client:
+    intents = discord.Intents.default()
+    intents.message_content = True
+    client = DiscordClient(intents=intents)
+    update_discord_client(client, img_client)
+    return client
+
+
 if __name__ == '__main__':
     # logger.info('Starting Bot')
+    load_dotenv()
+    TOKEN = os.getenv('DISCORD_TOKEN')
+
     client.run(TOKEN)

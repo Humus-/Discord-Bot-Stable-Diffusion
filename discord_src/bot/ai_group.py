@@ -53,6 +53,8 @@ class AIgroup(app_commands.Group):
     @app_commands.command(name = 'chat')
     async def hello(self, interaction: discord.Interaction, query: str):
 
+        await interaction.response.defer(thinking = True)  # don't put this after the server call. The delay can be more than 3 secs and cause err on client side.
+
         async with aiohttp.ClientSession() as session:
             request_data = {
                 'command_type': 'chat',
@@ -61,8 +63,6 @@ class AIgroup(app_commands.Group):
             service_url = createUrl(self.config['model_server']['chat_server'],
                 self.config['model_server']['chat_port'],
                 self.config['model_server']['chat_uri'])
-
-            await interaction.response.defer(thinking = True)  # don't put this after the server call. The delay can be more than 3 secs and cause err on client side.
 
             try:
                 async with session.post(service_url, data = request_data) as r:
