@@ -5,7 +5,6 @@ from flask import Response
 
 from models.mistralModel import MistralModel
 
-
 ENV = 'dev'
 
 # gonna make the flags as a config parameter later. Maybe even a pub sub thing for the server

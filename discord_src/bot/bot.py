@@ -12,19 +12,8 @@ from utils import utils
 from discord import app_commands
 from discord.ext import commands
 
-#### INIT CODE HERE
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-CONFIG_PATH = "utils/config.yml"
-
-config = None
-
 # Logger
 logger = logging.getLogger(__name__)
-
-config = utils.load_config(CONFIG_PATH)
-
-####INIT ENDS
 
 # For Debugging. Enable these features only for this guild
 MY_GUILD = discord.Object(id=167319816649179149)
@@ -121,5 +110,8 @@ if __name__ == '__main__':
     # logger.info('Starting Bot')
     load_dotenv()
     TOKEN = os.getenv('DISCORD_TOKEN')
+    CONFIG_PATH = "utils/config.yml"
+
+    config = utils.load_config(CONFIG_PATH)
 
     client.run(TOKEN)
