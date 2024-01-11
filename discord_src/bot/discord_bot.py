@@ -4,10 +4,10 @@ import os
 from dotenv import load_dotenv
 import aiohttp
 import random
-import ai_group
 import openai
 import logging
-from utils import utils
+from discord_src.utils import utils
+from discord_src.bot import ai_group
 
 from discord import app_commands
 from discord.ext import commands
@@ -15,12 +15,19 @@ from discord.ext import commands
 # Logger
 logger = logging.getLogger(__name__)
 
+# TODO: remove this later, we should read this just once in run_bot script and pass it to this function.
+CONFIG_PATH = "./discord_src/utils/config.yml"
+config = utils.load_config(CONFIG_PATH)
+
 # For Debugging. Enable these features only for this guild
 MY_GUILD = discord.Object(id=167319816649179149)
 
 # extending from Bot. Since it inherits Client, so this has more features.
 class Client(commands.Bot):
     """This is the bot class that contains all the featureset and responses to user queries"""
+
+    async def setup_hook(self):
+        print('Calling setup_hook(self):')
 
     async def on_ready(self):
         """Initialize some parameters and register slash commands once discord connection is established."""
@@ -57,25 +64,30 @@ class Client(commands.Bot):
         if message.content == 'show image':
             await message.channel.send(file = discord.File('./data/stable-diffusion-images-generation.png'))
 
+        # Keep track and disable the message for 10 mins.
+        # lang = detect(message.content)
+        # if lang == 'de':
+        #     await message.channel.send('Sorry the german translator is not active yet.')
+
         # Need to call this for discord to work properly
         await self.process_commands(message)
 
-intents = discord.Intents.default()
-intents.message_content = True
+# intents = discord.Intents.default()
+# intents.message_content = True
 
-# switch between these 2 as activity for gags.
-watching = discord.Activity(name='you intently', type = discord.ActivityType.watching)
-playing = discord.Game(name='with life')
-client = Client(intents = intents, command_prefix = '!', activity = watching)  # or activity = playing
+# # switch between these 2 as activity for gags.
+# watching = discord.Activity(name='you intently', type = discord.ActivityType.watching)
+# playing = discord.Game(name='with life')
+# client = Client(intents = intents, command_prefix = '!', activity = watching)  # or activity = playing
 
-@client.event
-async def on_error(event, *args, **kwargs):
-    print(f'error: {event}')
-    with open('err.log', 'a') as f:
-        if event == 'on_message':
-            f.write(f'Unhandled message: {args[0]}\n')
-        else:
-            raise
+# @client.event
+# async def on_error(event, *args, **kwargs):
+#     print(f'error: {event}')
+#     with open('err.log', 'a') as f:
+#         if event == 'on_message':
+#             f.write(f'Unhandled message: {args[0]}\n')
+#         else:
+#             raise
 
 # bot = commands.Bot(command_prefix='!', intents = intents)
 
@@ -85,33 +97,40 @@ async def on_error(event, *args, **kwargs):
 #     await interaction.response.send_message("Test")
 
 
-@client.command(name='catcall')
-async def tease(ctx):
-    response = "Yo cutie. Waccha up to?"
-    await ctx.send(response)
+# @client.command(name='catcall')
+# async def tease(ctx):
+#     response = "Yo cutie. Waccha up to?"
+#     await ctx.send(response)
 
-@client.tree.command(guild=MY_GUILD)
-async def slash(interaction: discord.Interaction, number: int, string: str):
-    await interaction.response.send_message(f'Modify {number=} {string=}', ephemeral=True)
+# @client.tree.command(guild=MY_GUILD)
+# async def slash(interaction: discord.Interaction, number: int, string: str):
+#     await interaction.response.send_message(f'Modify {number=} {string=}', ephemeral=True)
 
-# Add the slash commands
-client.tree.add_command(ai_group.AIgroup(client, config), guild=MY_GUILD)
+# # Add the slash commands
+# client.tree.add_command(ai_group.AIgroup(client, config), guild=MY_GUILD)
 
 
-def create_discord_client(img_client: ImageClient) -> discord.Client:
+def create_discord_client(config: dict[str, any]) -> discord.Client:
     intents = discord.Intents.default()
     intents.message_content = True
-    client = DiscordClient(intents=intents)
-    update_discord_client(client, img_client)
+    
+    # switch between these 2 as activity for gags.
+    watching = discord.Activity(name='you intently', type = discord.ActivityType.watching)
+    playing = discord.Game(name='with life')
+    client = Client(intents = intents, command_prefix = '!', activity = watching)  # or activity = playing
+
+    # update_discord_client(client)
     return client
 
 
-if __name__ == '__main__':
-    # logger.info('Starting Bot')
-    load_dotenv()
-    TOKEN = os.getenv('DISCORD_TOKEN')
-    CONFIG_PATH = "utils/config.yml"
+# if __name__ == '__main__':
+#     # If we want to run just this file independently
+#     load_dotenv()
+#     TOKEN = os.getenv('DISCORD_TOKEN')
+#     CONFIG_PATH = "utils/config.yml"
 
-    config = utils.load_config(CONFIG_PATH)
+#     logging.basicConfig()
 
-    client.run(TOKEN)
+#     config = utils.load_config(CONFIG_PATH)
+
+#     client.run(TOKEN)

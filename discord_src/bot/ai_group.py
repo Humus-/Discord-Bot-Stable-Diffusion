@@ -3,7 +3,7 @@ QUERY_LOG_FILE = 'query_logs.log'
 import discord
 from discord import app_commands
 from discord.ext import commands
-from utils.utils import createUrl
+from discord_src.utils import utils
 
 from openai import OpenAI
 
@@ -60,7 +60,7 @@ class AIgroup(app_commands.Group):
                 'command_type': 'chat',
                 "query": query
             }
-            service_url = createUrl(self.config['model_server']['chat_server'],
+            service_url = utils.createUrl(self.config['model_server']['chat_server'],
                 self.config['model_server']['chat_port'],
                 self.config['model_server']['chat_uri'])
 
@@ -104,7 +104,7 @@ class AIgroup(app_commands.Group):
                 'command_type': 'dream',
                 "query": query
             }
-            service_url = createUrl(self.config['model_server']['stable_diffusion_server'],
+            service_url = utils.createUrl(self.config['model_server']['stable_diffusion_server'],
                 self.config['model_server']['stable_diffusion_port'],
                 self.config['model_server']['stable_diffusion_uri'])
 

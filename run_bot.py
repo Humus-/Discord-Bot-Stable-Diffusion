@@ -5,15 +5,14 @@ import os
 from dotenv import load_dotenv
 from threading import Thread
 
-from utils import utils
-
+from discord_src.utils import utils
 from discord_src.bot import discord_bot#, image_client
 
 
 #### INIT CODE HERE
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-CONFIG_PATH = "utils/config.yml"
+CONFIG_PATH = "./discord_src/utils/config.yml"
 
 config = None
 
@@ -38,11 +37,11 @@ logger.info('Launching bot')
 # os.environ["CUDasdfasf"] = "1"
 
 
-def main():
-	# TODO: Check and launch the Flask application
+def main() -> None:
+	# TODO: Check and launch the Flask application in parallel? Maybe make a separate script to do that. Like a pipeline.
 
-	# discord_client = discord_bot.create_discord_client(config)
-	# discord_client.run(os.environ["DISCORD_TOKEN"])
+	discord_client = discord_bot.create_discord_client(config)
+	discord_client.run(TOKEN)
 
 
 if __name__ == "__main__":
