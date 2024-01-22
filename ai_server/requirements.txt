@@ -1,14 +1,14 @@
-Flask
-transformers
-torch
-torchvision
+Flask==3.0.0
+transformers==4.35.0
+torch==2.1.0
+torchvision==0.16.0
 
 # with or without cuda?? cuda is used with GPU accelaration. Check if my system supports this.
 # do we still need transformers??
-ctransformers[cuda]
+ctransformers[cuda]==0.2.27
 
 
 diffusers
 invisible_watermark
 accelerate
-safetensors
+safetensors==0.4.0
