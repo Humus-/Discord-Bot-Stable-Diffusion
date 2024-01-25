@@ -7,6 +7,7 @@ import random
 import openai
 import logging
 from discord_src.utils import utils
+from discord_src.utils.config import Config
 from discord_src.bot import ai_group
 
 from discord import app_commands
@@ -16,8 +17,10 @@ from discord.ext import commands
 logger = logging.getLogger(__name__)
 
 # TODO: remove this later, we should read this just once in run_bot script and pass it to this function.
-CONFIG_PATH = "./discord_src/utils/config.yml"
-config = utils.load_config(CONFIG_PATH)
+# CONFIG_PATH = "./discord_src/utils/config.yml"
+# config = utils.load_config(CONFIG_PATH)
+
+print(f'config val: {Config.get("model_server.chat_uri")}')
 
 # For Debugging. Enable these features only for this guild
 MY_GUILD = discord.Object(id=167319816649179149)
