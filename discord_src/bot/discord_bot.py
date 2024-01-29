@@ -6,8 +6,12 @@ import aiohttp
 import random
 import openai
 import logging
+
+import hydra
+from omegaconf import OmegaConf
+
 from discord_src.utils import utils
-from discord_src.utils.config import Config
+from discord_src.config.app_config import AppConfig
 from discord_src.bot import ai_group
 
 from discord import app_commands
@@ -20,7 +24,19 @@ logger = logging.getLogger(__name__)
 # CONFIG_PATH = "./discord_src/utils/config.yml"
 # config = utils.load_config(CONFIG_PATH)
 
-print(f'config val: {Config.get("model_server.chat_uri")}')
+# TODO: check this. Env vars not workings
+print(f'hydra env va? HYDRA_FULL_ERROR : {os.getenv("HYDRA_FULL_ERROR")}')
+
+
+@hydra.main(config_path='discord_src/config', config_name="app_config")
+def something(cfg: AppConfig) -> None:
+    OmegaConf.to_object(cfg)
+    # log to console and into the `outputs` folder per default
+    print(f"\n{OmegaConf.to_yaml(cfg)}")
+
+    print(f'config val: {cfg.model_server.chat_uri}')
+
+something()
 
 # For Debugging. Enable these features only for this guild
 MY_GUILD = discord.Object(id=167319816649179149)

@@ -5,21 +5,23 @@ from typing import Optional
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
+from omegaconf import MISSING
+
 import hydra  # other option was to use the bison package
 from hydra.core.config_store import ConfigStore
 
 @dataclass
 class ModelServerParams:
-  sd_server: str
-  sd_port: int
-  sd_uri: str
-  chat_server: str
-  chat_port: int
-  chat_uri: str
+  sd_server: str = MISSING
+  sd_port: int = MISSING
+  sd_uri: str = MISSING
+  chat_server: str = MISSING
+  chat_port: int = MISSING
+  chat_uri: str = MISSING
 
 @dataclass
 class Paths:
-  data_path: str
+  data_path: str = './data'
   log_path: Optional[str] = Field('./logs', title='The folder where log are stored')
 
 @dataclass
@@ -31,3 +33,4 @@ class AppConfig:
 
 cs = ConfigStore.instance()
 cs.store(name = 'app_config', node = AppConfig)
+# cs.store(name="config2", node=MySQLConfig(host="test.db", port=3307))

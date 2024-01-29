@@ -1,9 +1,0 @@
-# YAML for the boys, cuz I'm bored of using JSON everywhere.
-model_server:
-  stable_diffusion_server: localhost
-  stable_diffusion_port: 5000
-  stable_diffusion_uri: img_chat
-  chat_server: localhost
-  chat_port: 5000
-  chat_uri: text_chat
-chat_gpt_fallback: True
