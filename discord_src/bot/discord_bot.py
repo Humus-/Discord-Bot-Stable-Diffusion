@@ -6,7 +6,12 @@ import aiohttp
 import random
 import openai
 import logging
+
+import hydra
+from omegaconf import OmegaConf
+
 from discord_src.utils import utils
+from discord_src.config.app_config import AppConfig
 from discord_src.bot import ai_group
 
 from discord import app_commands
@@ -16,8 +21,25 @@ from discord.ext import commands
 logger = logging.getLogger(__name__)
 
 # TODO: remove this later, we should read this just once in run_bot script and pass it to this function.
-CONFIG_PATH = "./discord_src/utils/config.yml"
-config = utils.load_config(CONFIG_PATH)
+# CONFIG_PATH = "./discord_src/utils/config.yml"
+# config = utils.load_config(CONFIG_PATH)
+
+# TODO: check this. Env vars not workings
+print(f'hydra env va? HYDRA_FULL_ERROR : {os.getenv("HYDRA_FULL_ERROR")}')
+
+# @hydra.main(version_base = '1.3', config_path='../../discord_src/config', config_name="config")
+# def do_this(cfg: AppConfig):
+#     # print(f'cfg: {cfg}')
+#     # return
+#     # this line actually runs the checks of pydantic
+#     from omegaconf import OmegaConf
+#     OmegaConf.to_object(cfg)
+#     # log to console and into the `outputs` folder per default
+#     print(f"\n{OmegaConf.to_yaml(cfg)}")
+
+#     print(f'habiibi: {cfg.paths.data_path}')
+
+# do_this()
 
 # For Debugging. Enable these features only for this guild
 MY_GUILD = discord.Object(id=167319816649179149)
@@ -43,9 +65,13 @@ class Client(commands.Bot):
 
         print(f'{self.user} has connected to Discord!')
 
-        # initialize Chat GPT Api if we have the token.
-        if config['chat_gpt_fallback']:
-            openai.api_key = os.getenv('OPENAI_API_KEY')
+        @hydra.main(version_base = '1.3', config_path='../../discord_src/config', config_name="config")
+        def chat_gpt_key(cfg: AppConfig):
+            # initialize Chat GPT Api if we have the token.
+            if cfg.open_ai_fallback:
+                openai.api_key = os.getenv('OPENAI_API_KEY')
+
+        chat_gpt_key()  # using it like this for now. Will use compose later.
 
     async def on_message(self, message):
         """I don't plan to use this often, but this is for adding some secret features."""
