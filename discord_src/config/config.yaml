@@ -6,7 +6,7 @@ model_server:
   chat_server: localhost
   chat_port: 5000
   chat_uri: text_chat
-Paths:
-  data_path: {hydra:runtime.cwd}/data/
+paths:
+  data_path: ${hydra:runtime.cwd}/data/
   log_path: ./logs
-chat_gpt_fallback: True
+open_ai_fallback: True
