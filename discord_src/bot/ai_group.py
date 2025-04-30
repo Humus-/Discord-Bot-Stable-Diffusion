@@ -6,6 +6,7 @@ from discord.ext import commands
 from discord_src.utils import utils
 
 from openai import OpenAI
+# from langdetect import detect   # polyglot is wayy faster, but we won't need to handle large chunks of text for this to be a problem.
 
 import datetime
 import logging
