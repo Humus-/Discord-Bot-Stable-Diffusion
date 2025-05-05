@@ -1,14 +1,22 @@
 [project]
-name = "Discord-Bot-Stable-Diffusion"
+name = "discord-bot-stable-diffusion"
 version = "0.1.0"
-description = ""
+description = "A discord bot that responds to text and Image prompts with the help of different LLM models"
 authors = [
     {name = "Himanshu Sharma", email = "himanshusharma96@gmail.com"}
 ]
+license = {text = "GNU"}
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "python-dotenv (>=1.1.0,<2.0.0)",
+    "requests (>=2.32.3,<3.0.0)",
+    "discord-py (>=2.5.2,<3.0.0)",
+    "aiofiles (>=24.1.0,<25.0.0)",
+    "openai (>=1.77.0,<2.0.0)",
+    "hydra-core (>=1.3.2,<2.0.0)"
 ]
+
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
