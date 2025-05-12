@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 logger.setLevel(logging.DEBUG)
 
-def getLogLevel(level = None):
+def getLogLevel(level: str = None):
 	if not level:
 		level = os.getenv('LOG_LEVEL', default = 'DEBUG')
 
@@ -25,7 +25,7 @@ def getLogLevel(level = None):
 
 	return logging.DEBUG
 
-def createUrl(addr, port, resource_uri = None):
+def createUrl(addr: str, port: int, resource_uri: str = None):
 	url = ""
 	if not addr.startswith("http"):
 		url = "http://"
@@ -37,7 +37,7 @@ def createUrl(addr, port, resource_uri = None):
 
 	return url
 
-def load_config(path):
+def load_config(path: str):
 	config = None
 	logger = logging.getLogger(__name__)
 
