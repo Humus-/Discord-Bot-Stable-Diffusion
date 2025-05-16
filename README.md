@@ -28,8 +28,12 @@ OPENAI_API_KEY=
 
 - Install the requirements
 ```
-pip install -r requirements.txt
+poetry install
 ```
+- Switch to the new virtual environment
+```
+eval $(poetry env activate)
+````
 - Go to ai_server folder and run the demo ai server. (Instructions in the readme of that folder)
 	Optional if you have a different server. Then you need to change the server address in config.yml
 - Once the other services are ready, run
@@ -92,24 +96,18 @@ TODO tasks:
 │   └── raw                 <- The original, immutable data dump.
 ├── docs                    <- Directory for Sphinx documentation in rst or md.
 ├── environment.yml         <- The conda environment file for reproducibility.
-├── models                  <- Trained and serialized models, model predictions,
-│                              or model summaries.
-├── notebooks               <- Jupyter notebooks. Naming convention is a number (for
-│                              ordering), the creator's initials and a description,
-│                              e.g. `1.0-fw-initial-data-exploration`.
+├── ai_server
+│   └── models              <- Support for different model classes that handle inference
 ├── pyproject.toml          <- Build configuration. Don't change! Use `pip install -e .`
 │                              to install for development or to build `tox -e build`.
-├── references              <- Data dictionaries, manuals, and all other materials.
-├── reports                 <- Generated analysis as HTML, PDF, LaTeX, etc.
-│   └── figures             <- Generated plots and figures for reports.
 ├── scripts                 <- Analysis and production scripts which import the
 │                              actual PYTHON_PKG, e.g. train_model.
 ├── setup.cfg               <- Declarative configuration of your project.
-├── setup.py                <- [DEPRECATED] Use `python setup.py develop` to install for
-│                              development or `python setup.py bdist_wheel` to build.
-├── src
-│   └── my_pkg              <- Actual Python package where the main functionality goes.
+├── discord_src
+│   └── bot                 <- The main source code of the discord bot
+│   └── config              <- This is where we keep the hydra config.
+│   └── utils               <- Contains the miscellaneous code that does not have anywhere
+│                              else to be.
 ├── tests                   <- Unit tests which can be run with `pytest`.
 ├── .coveragerc             <- Configuration for coverage reports of unit tests.
-├── .isort.cfg              <- Configuration for git hook that sorts imports.
 └── .pre-commit-config.yaml <- Configuration of pre-commit git hooks.
